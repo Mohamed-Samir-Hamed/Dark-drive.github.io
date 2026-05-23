@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><title>Shared - Dark Drive</title><link rel="stylesheet" href="css/main.css"><link rel="stylesheet" href="css/dashboard.css"></head>
+<body>
+    <div class="app-container"><div class="sidebar" id="sidebar-container"></div><div class="main-area"><div class="top-nav" id="topbar-container"></div><div class="content-area animate-fade"><h2 class="section-title">🤝 Shared With Me</h2><div class="grid-container" id="grid-container"></div></div></div></div>
+    <script src="js/security.js"></script><script src="js/db.js"></script><script src="js/auth.js"></script><script src="js/ui.js"></script>
+    <script>
+        const user = App.Auth.requireAuth(); App.UI.renderSidebar('shared'); App.UI.renderTopbar();
+        const db = App.DB.getData(); const grid = document.getElementById('grid-container'); const myShares = db.shares.filter(s => s.sharedWith === user.id);
+        if(myShares.length === 0) { grid.innerHTML = '<p style="color:var(--text-secondary)">No items.</p>'; } else { myShares.forEach(s => { if(s.itemType === 'video') { const v = db.videos.find(vid => vid.id === s.itemId); if(v) { grid.innerHTML += `<div class="card" onclick="window.location.href='player.html?vid=${v.id}'"><div class="card-icon" style="color: var(--success);">🎥</div><div class="card-title">${v.title}</div></div>`; } } }); }
+    </script>
+</body></html>

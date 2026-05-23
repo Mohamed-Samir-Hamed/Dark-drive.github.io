@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><title>Dashboard - Dark Drive</title><link rel="stylesheet" href="css/main.css"><link rel="stylesheet" href="css/dashboard.css"></head>
+<body>
+    <div class="app-container"><div class="sidebar" id="sidebar-container"></div><div class="main-area"><div class="top-nav" id="topbar-container"></div><div class="content-area animate-fade"><h2 class="section-title">My Drive</h2><div class="grid-container" id="grid-container"></div></div></div></div>
+    <script src="js/security.js"></script><script src="js/db.js"></script><script src="js/auth.js"></script><script src="js/ui.js"></script>
+    <script>
+        App.Auth.requireAuth(); App.UI.renderSidebar('dashboard'); App.UI.renderTopbar();
+        const grid = document.getElementById('grid-container'); const db = App.DB.getData();
+        db.folders.filter(f => f.parentId === 'root').forEach(f => { grid.innerHTML += `<div class="card" onclick="window.location.href='folder.html?id=${f.id}'"><div class="card-icon" style="color: var(--neon-blue);">📁</div><div class="card-title">${f.name}</div><div class="card-meta">Folder</div></div>`; });
+        db.videos.filter(v => v.folderId === 'root').forEach(v => { grid.innerHTML += `<div class="card" onclick="window.location.href='player.html?vid=${v.id}'"><div class="card-icon" style="color: var(--neon-purple);">🎥</div><div class="card-title">${v.title}</div><div class="card-meta">Video</div></div>`; });
+    </script>
+</body></html>

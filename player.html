@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Player - Dark Drive</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/player.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="sidebar" id="sidebar-container"></div>
+        <div class="main-area">
+            <div class="top-nav" id="topbar-container"></div>
+            <div class="content-area animate-fade">
+                <div class="section-title">
+                    <h2 id="video-title">Loading Stream...</h2>
+                    <button class="btn btn-neon-blue" onclick="history.back()">🔙 Return</button>
+                </div>
+                
+                <div class="player-wrapper" id="player-wrapper">
+                    <iframe id="video-element" src="" allow="autoplay; fullscreen"></iframe>
+                    
+                    <div class="player-controls" id="player-controls">
+                        <div class="watermark" id="watermark-text"></div>
+                        
+                        <div class="controls-row">
+                            <div class="controls-left">
+                                <span id="time-display" style="font-family: monospace; color: var(--neon-blue);">Secure Stream Active</span>
+                            </div>
+                            <div class="controls-right">
+                                <button class="control-btn" id="fs-btn">[ Fullscreen ]</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px; color: var(--text-secondary); font-size: 0.9rem; background: var(--bg-glass); padding: 15px; border-radius: 8px; border: 1px solid var(--border-glass);">
+                    ⚠️ <strong>Security Notice:</strong> Stream protected via frontend protocols. True DRM requires encrypted delivery.
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/security.js"></script><script src="js/db.js"></script><script src="js/auth.js"></script><script src="js/ui.js"></script>
+    <script>
+        const user = App.Auth.requireAuth(); 
+        App.UI.renderSidebar('dashboard'); 
+        App.UI.renderTopbar();
+        
+        const vidId = new URLSearchParams(window.location.search).get('vid'); 
+        const vData = App.DB.getData().videos.find(v => v.id === vidId);
+        
+        const vid = document.getElementById('video-element');
+        const wp = document.getElementById('player-wrapper');
+        const fsBtn = document.getElementById('fs-btn');
+        
+        if(vData) { 
+            document.getElementById('video-title').innerText = vData.title; 
+            document.getElementById('watermark-text').innerText = `${user.username} - ID:${user.id}`; 
+            vid.src = vData.url; 
+        } else { 
+            window.location.href = 'dashboard.html'; 
+        }
+
+        fsBtn.addEventListener('click', () => { 
+            if(!document.fullscreenElement) {
+                if(wp.requestFullscreen) wp.requestFullscreen(); 
+            } else {
+                if(document.exitFullscreen) document.exitFullscreen(); 
+            }
+        });
+
+        let hideTmr; 
+        wp.addEventListener('mousemove', () => { 
+            wp.classList.remove('hide-cursor'); 
+            clearTimeout(hideTmr); 
+            hideTmr = setTimeout(() => wp.classList.add('hide-cursor'), 2500); 
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><title>Settings - Dark Drive</title><link rel="stylesheet" href="css/main.css"><link rel="stylesheet" href="css/dashboard.css"></head>
+<body>
+    <div class="app-container"><div class="sidebar" id="sidebar-container"></div><div class="main-area"><div class="top-nav" id="topbar-container"></div><div class="content-area animate-fade"><h2 class="section-title">System Settings</h2>
+        <div class="glass-panel" style="padding: 30px; max-width: 800px;">
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">Platform configurations.</p>
+            <div style="margin-bottom: 20px;"><label style="display:flex; align-items:center; gap:10px;"><input type="checkbox" checked> Enable Cinematic Blur Mode</label></div>
+            <div style="margin-bottom: 30px;"><label style="display:flex; align-items:center; gap:10px;"><input type="checkbox" checked> Receive Sharing Notifications</label></div>
+            <button class="btn btn-neon-blue">Save Preferences</button>
+        </div></div></div></div>
+    <script src="js/security.js"></script><script src="js/db.js"></script><script src="js/auth.js"></script><script src="js/ui.js"></script>
+    <script>App.Auth.requireAuth(); App.UI.renderSidebar('settings'); App.UI.renderTopbar();</script>
+</body></html>

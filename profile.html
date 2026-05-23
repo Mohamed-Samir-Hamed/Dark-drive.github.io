@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><title>Profile - Dark Drive</title><link rel="stylesheet" href="css/main.css"><link rel="stylesheet" href="css/dashboard.css"></head>
+<body>
+    <div class="app-container"><div class="sidebar" id="sidebar-container"></div><div class="main-area"><div class="top-nav" id="topbar-container"></div><div class="content-area animate-fade"><h2 class="section-title">My Profile</h2>
+        <div class="glass-panel" style="max-width: 600px; margin: 0 auto; padding: 40px; text-align: center;">
+            <div class="avatar" id="big-avatar" style="width: 120px; height: 120px; font-size: 4rem; margin: 0 auto 20px auto; box-shadow: 0 0 30px rgba(0, 243, 255, 0.4);">U</div>
+            <h2 id="prof-name" style="color: var(--text-primary); font-size: 2rem;">USERNAME</h2><p id="prof-role" style="color: var(--neon-blue); text-transform: uppercase; margin-bottom: 30px; font-weight: bold;">ROLE</p><hr style="border-color: var(--border-glass); margin-bottom: 30px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: left; margin-bottom: 30px;"><div><div style="color: var(--text-secondary); font-size: 0.9rem;">Account ID</div><div id="prof-id" style="font-size: 1.1rem;">#---</div></div><div><div style="color: var(--text-secondary); font-size: 0.9rem;">Member Since</div><div id="prof-date" style="font-size: 1.1rem;">---</div></div></div>
+            <button class="btn btn-neon-purple" style="width: 100%;">Edit Profile</button>
+        </div></div></div></div>
+    <script src="js/security.js"></script><script src="js/db.js"></script><script src="js/auth.js"></script><script src="js/ui.js"></script>
+    <script>
+        const u = App.Auth.requireAuth(); App.UI.renderSidebar('profile'); App.UI.renderTopbar();
+        document.getElementById('prof-name').innerText = u.username; document.getElementById('prof-role').innerText = u.role; document.getElementById('big-avatar').innerText = u.username.charAt(0).toUpperCase(); document.getElementById('prof-id').innerText = '#' + u.id; document.getElementById('prof-date').innerText = new Date(u.createdAt).toLocaleDateString();
+    </script>
+</body></html>

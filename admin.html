@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Admin - Dark Drive</title><link rel="stylesheet" href="css/main.css"><link rel="stylesheet" href="css/dashboard.css"><link rel="stylesheet" href="css/admin.css"></head>
+<body>
+    <div class="app-container"><div class="sidebar" id="sidebar-container"></div><div class="main-area"><div class="top-nav" id="topbar-container"></div><div class="content-area animate-fade"><h2 class="section-title" style="color: var(--neon-purple);">🛡️ Admin Console</h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 30px;">
+            <div class="glass-panel" style="padding: 24px;"><h3 style="margin-bottom: 15px; color: var(--neon-blue);">📁 Create Folder</h3><form id="folderForm"><input type="text" id="folderName" class="form-control" placeholder="Folder Name" required style="margin-bottom: 10px;"><button class="btn btn-neon-blue">Create</button></form></div>
+            <div class="glass-panel" style="padding: 24px;"><h3 style="margin-bottom: 15px; color: var(--neon-purple);">🎥 Add Video Link</h3><form id="videoForm"><input type="text" id="vidTitle" class="form-control" placeholder="Video Title" required style="margin-bottom: 10px;"><input type="text" id="vidUrl" class="form-control" placeholder="Google Drive Link" required style="margin-bottom: 10px;"><select id="vidFolder" class="form-control" style="margin-bottom: 10px;"><option value="root">Root Directory</option></select><button class="btn btn-neon-purple">Publish</button></form></div>
+        </div>
+        <h3 style="margin-bottom: 15px;">Users</h3><table class="admin-table" style="margin-bottom: 30px;"><thead><tr><th>ID</th><th>Username</th><th>Role</th><th>Actions</th></tr></thead><tbody id="users-table"></tbody></table>
+        <h3 style="margin-bottom: 15px;">Videos</h3><table class="admin-table"><thead><tr><th>Title</th><th>Folder ID</th><th>URL</th><th>Actions</th></tr></thead><tbody id="videos-table"></tbody></table>
+    </div></div></div>
+    <script src="js/security.js"></script><script src="js/db.js"></script><script src="js/auth.js"></script><script src="js/ui.js"></script>
+    <script>
+        App.Auth.requireAdmin(); App.UI.renderSidebar('admin'); App.UI.renderTopbar();
+        
+        function cDriveLnk(u) { 
+            if(u.includes('drive.google.com')){ 
+                let id=''; 
+                if(u.includes('/d/')) id=u.split('/d/')[1].split('/')[0]; 
+                else if(u.includes('id=')) id=u.split('id=')[1].split('&')[0]; 
+                if(id) return `https://drive.google.com/file/d/${id}/preview?autoplay=1`; 
+            } 
+            return u; 
+        }
+        
+        function loadData() {
+            const db = App.DB.getData(); const fSel = document.getElementById('vidFolder'); fSel.innerHTML = '<option value="root">Root</option>'; db.folders.forEach(f => fSel.innerHTML += `<option value="${f.id}">${f.name}</option>`);
+            const uTab = document.getElementById('users-table'); uTab.innerHTML = ''; db.users.forEach(u => { const b = u.role === 'admin' ? 'badge-admin' : 'badge-user'; uTab.innerHTML += `<tr><td>${u.id}</td><td>${u.username}</td><td><span class="badge ${b}">${u.role.toUpperCase()}</span></td><td>${u.role !== 'admin' ? `<button class="action-btn delete" onclick="delU('${u.id}')">Delete</button>` : 'System'}</td></tr>`; });
+            const vTab = document.getElementById('videos-table'); vTab.innerHTML = ''; db.videos.forEach(v => { vTab.innerHTML += `<tr><td>${v.title}</td><td>${v.folderId}</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${v.url}</td><td><button class="action-btn delete" onclick="delV('${v.id}')">Delete</button></td></tr>`; });
+        }
+        document.getElementById('folderForm').addEventListener('submit', e => { e.preventDefault(); const db = App.DB.getData(); db.folders.push({ id: 'f_' + Date.now(), name: document.getElementById('folderName').value, ownerId: App.Auth.getCurrentUser().id, parentId: 'root' }); App.DB.saveData(db); document.getElementById('folderForm').reset(); loadData(); });
+        document.getElementById('videoForm').addEventListener('submit', e => { e.preventDefault(); const db = App.DB.getData(); db.videos.push({ id: 'v_' + Date.now(), title: document.getElementById('vidTitle').value, url: cDriveLnk(document.getElementById('vidUrl').value), folderId: document.getElementById('vidFolder').value, ownerId: App.Auth.getCurrentUser().id, size: 'Unknown' }); App.DB.saveData(db); document.getElementById('videoForm').reset(); loadData(); });
+        window.delU = id => { if(confirm('Delete user?')) { const db = App.DB.getData(); db.users = db.users.filter(u => u.id !== id); App.DB.saveData(db); loadData(); } };
+        window.delV = id => { if(confirm('Delete video?')) { const db = App.DB.getData(); db.videos = db.videos.filter(v => v.id !== id); App.DB.saveData(db); loadData(); } };
+        loadData();
+    </script>
+</body></html>
